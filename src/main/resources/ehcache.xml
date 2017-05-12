@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache updateCheck="false" dynamicConfig="false">
+	<diskStore path="java.io.tmpdir/weather-ehcache" />
+
+	<defaultCache
+			eternal="false"
+			maxElementsInMemory="100000"
+			overflowToDisk="false"
+			diskPersistent="false"
+			timeToLiveSeconds="3600"
+			memoryStoreEvictionPolicy="LRU"/>
+	<cache
+			name="city"
+			eternal="false"
+			maxElementsInMemory="1000"
+			overflowToDisk="false"
+			diskPersistent="false"
+			timeToLiveSeconds="3600"
+			memoryStoreEvictionPolicy="LRU"/>
+
+	<cache
+			name="weather"
+			eternal="false"
+			maxElementsInMemory="1000"
+			overflowToDisk="false"
+			diskPersistent="false"
+			timeToLiveSeconds="3600"
+			memoryStoreEvictionPolicy="LRU"/>
+</ehcache>

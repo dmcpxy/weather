@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Weather Demo</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Weather Forcast</a>
+        </div>
+        <div id="navbar1">
+            <form class="navbar-form navbar-left">
+            </form>
+        </div>
+        <div id="navbar2">
+            <form class="navbar-form navbar-left">
+            </form>
+        </div>
+        <div id="navbar3">
+            <form class="navbar-form navbar-left">
+            </form>
+        </div>
+        <div id="navbar4" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-left">
+                <select class="form-control" id="area_id">
+                    <option value="Guangzhou">Guangzhou</option>
+                    <option value="Basel">Basel</option>
+                </select>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"></h1>
+            <h2 class="sub-header">Meteogram <span id="city">Guangzhou</span></h2>
+            <div class="location_description">
+                    <span itemscope="" itemtype="http://schema.org/AdministrativeArea">
+                          <span class="admin" itemprop="name">Guangdong</span>,
+                    </span>
+                <span class="country" itemprop="containedInPlace" itemscope="" itemtype="http://schema.org/Country">
+                          <span itemprop="name">China</span>,
+                    </span>
+                <span class="coords" itemprop="geo" itemscope="" itemtype="http://schema.org/GeoCoordinates">23.12°N 113.25°E                    15m asl
+                          <meta itemprop="elevation" content="15">
+                            <a target="_blank" title="Geonames" href="http://www.geonames.org/1809858">
+                              <span class="glyph edit"></span>
+                    </a>
+                    <meta itemprop="latitude" content="23.12">
+                    <meta itemprop="longitude" content="113.25">
+                    </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6 col-md-6">
+            <a href="#" class="thumbnail">
+                <img id="gramId" style="height: 490px" src="./images/meteogram_web_hd_Guangzhou.png">
+            </a>
+        </div>
+    </div>
+</div>
+<!--<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>-->
+<script src="./js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $("#area_id").bind('change', function (event) {
+            /* Act on the event */
+            var current = $(this).val();
+            var new_img_src = "./images/meteogram_web_hd_" + current + ".png";
+            $("#gramId").attr("src", new_img_src);
+            $("#city").text(current);
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <!-- Enable annotation configuration -->
+    <context:annotation-config/>
+    <!-- Scan packages for Spring annotations -->
+    <context:component-scan base-package="com.dmcp"/>
+    <context:property-placeholder location="classpath*:config.properties"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <!-- MySQL数据库配置 -->
+        <property name="driverClass" value="org.sqlite.JDBC"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="initialPoolSize" value="2"/>
+        <property name="minPoolSize" value="1"/>
+        <property name="maxPoolSize" value="5"/>
+        <property name="maxStatements" value="100"/>
+        <property name="maxIdleTime" value="3600"/>
+        <property name="acquireIncrement" value="2"/>
+        <property name="acquireRetryAttempts" value="10"/>
+        <property name="acquireRetryDelay" value="600"/>
+        <property name="testConnectionOnCheckin" value="true"/>
+        <property name="idleConnectionTestPeriod" value="1200"/>
+        <property name="checkoutTimeout" value="10000"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <bean id="downloadImageJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="getWeatherImagesServiceImpl"/>
+        <property name="targetMethod" value="download"/>
+    </bean>
+    <bean id="downloadImageJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="downloadImageJobDetail"/>
+        <property name="cronExpression" value="${job.cron}"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+        <property name="triggers">
+            <list>
+                <ref bean="downloadImageJobTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml"/>
+    </bean>
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="cacheManagerFactory"/>
+    </bean>
+
+    <bean id="getWeatherImagesServiceImpl" class="com.dmcp.smart.service.impl.GetWeatherImagesServiceImpl"
+          init-method="init">
+        <property name="downloadPath" value="${download.path}"/>
+        <property name="downloadOncePerDay" value="${download.once.per_day}"/>
+        <property name="httpRequestTimeout" value="${http.request.timeout}"/>
+    </bean>
+    <bean id="cityMapServiceImpl" class="com.dmcp.smart.service.impl.LocationServiceImpl">
+        <property name="httpRequestTimeout" value="${http.request.timeout}"/>
+        <property name="pageSize" value="${search.city.pagesize}"/>
+    </bean>
+
+    <!-- init-method="initialize" destroy-method="destroy" -->
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5"/>
+        <property name="keepAliveSeconds" value="300"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="queueCapacity" value="100"/>
+    </bean>
+</beans>
